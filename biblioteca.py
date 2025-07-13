@@ -13,6 +13,13 @@ def fun_meses() -> str:
     meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
     return meses
 
+def barras() -> str:
+    if(os.name == 'posix'):
+        barra = '/'
+        return barra
+    if(os.name == 'nt'):
+        barra = '\\'
+
 def buscar_ultima_linha(diretorio) -> str:
     diretorio_corrigido = diretorio
     if os.path.isfile(diretorio_corrigido):
@@ -25,63 +32,34 @@ def buscar_ultima_linha(diretorio) -> str:
 
 def rastrear_entradasaida(parametro) -> None:
     mensagem = parametro
-    if(os.name == 'posix'): #Se for Sistema Linux "posix"
-        for w in range(int(biblioteca.v_ano()),0,-1): # for primario de busca [Categoria: ANO] --- range(início, fim, passo)
-            if not os.path.isdir(f'dados/20{w}'): return #Verifica se o diretório existe, se não. para a executação da função.
+    for w in range(int(biblioteca.v_ano()),0,-1): # for primario de busca [Categoria: ANO] --- range(início, fim, passo)
+        if not os.path.isdir(f'dados{barras()}20{w}'): return #Verifica se o diretório existe, se não. para a executação da função.
         
-            for i in range(12,0,-1):  # range(início, fim, passo)
-                for x in range(31,0,-1):
-                    diretorio_correcao = f'dados/20{w}/{i}-{fun_meses()[i-1]}/dia_{x}.csv'
+        for i in range(12,0,-1):  # range(início, fim, passo)
+            for x in range(31,0,-1):
+                diretorio_correcao = f'dados{barras()}20{w}{barras()}{i}-{fun_meses()[i-1]}{barras()}dia_{x}.csv'
 
-                    if os.path.isfile(diretorio_correcao):
-                        with open(diretorio_correcao, mode='r', encoding='utf-8') as arquivo_csv:
-                            penultima_linha = None
-                            ultima_linha = None
+                if os.path.isfile(diretorio_correcao):
+                    with open(diretorio_correcao, mode='r', encoding='utf-8') as arquivo_csv:
+                        penultima_linha = None
+                        ultima_linha = None
                         
-                            for linha in csv.reader(arquivo_csv): #Esse for acha a última linha do arquivo.
-                                if linha != []:
-                                    penultima_linha = ultima_linha
-                                    ultima_linha = linha
+                        for linha in csv.reader(arquivo_csv): #Esse for acha a última linha do arquivo.
+                            if linha != []:
+                                penultima_linha = ultima_linha
+                                ultima_linha = linha
 
-                        if ultima_linha and ultima_linha[0].strip().lower() == 'entrada':
-                            print(f'>Foi encontrado um arquivo {diretorio_correcao}, {mensagem}.')
-                            with open(diretorio_correcao, mode='a', newline='', encoding='utf-8') as arquivo_csv: #Abre o Arquivo para editar.
-                                escritor = csv.writer(arquivo_csv) #
-                                escritor.writerow([f'Saída', '  '+str(biblioteca.v_data()), str(biblioteca.v_horario())]) #Inseri a Saída
-                            print(f'   Últimas Linhas: {penultima_linha}')
-                            print(f'                   {ultima_linha}')
-                            print(f'                   {buscar_ultima_linha(diretorio_correcao)}\n')
-                            print('>Saída adicionada com sucesso.')
-                            return #Encerra o processamento da função.
-    
-    if(os.name == 'nt'): #Se for Sistema Windows "nt"
-        for w in range(int(biblioteca.v_ano()),0,-1): # for primario de busca [Categoria: ANO] --- range(início, fim, passo)
-            if not os.path.isdir(f'dados\\20{w}'): return #Verifica se o diretório existe, se não. para a executação da função.
-        
-            for i in range(12,0,-1):  # range(início, fim, passo)
-                for x in range(31,0,-1):
-                    diretorio_correcao = f'dados\\20{w}\\{i}-{fun_meses()[i-1]}\\dia_{x}.csv'
+                    if ultima_linha and ultima_linha[0].strip().lower() == 'entrada':
+                        print(f' > Foi encontrado um arquivo {diretorio_correcao}, {mensagem}.')
+                        with open(diretorio_correcao, mode='a', newline='', encoding='utf-8') as arquivo_csv: #Abre o Arquivo para editar.
+                            escritor = csv.writer(arquivo_csv) #
+                            escritor.writerow([f'Saída', '  '+str(biblioteca.v_data()), str(biblioteca.v_horario())]) #Inseri a Saída
 
-                    if os.path.isfile(diretorio_correcao):
-                        with open(diretorio_correcao, mode='r', encoding='utf-8') as arquivo_csv:
-                            penultima_linha = None
-                            ultima_linha = None
-                        
-                            for linha in csv.reader(arquivo_csv): #Esse for acha a última linha do arquivo.
-                                if linha != []:
-                                    penultima_linha = ultima_linha
-                                    ultima_linha = linha
-
-                        if ultima_linha and ultima_linha[0].strip().lower() == 'entrada':
-                            print(f'>Foi encontrado um arquivo {diretorio_correcao}, {mensagem}.')
-                            with open(diretorio_correcao, mode='a', newline='', encoding='utf-8') as arquivo_csv: #Abre o Arquivo para editar.
-                                escritor = csv.writer(arquivo_csv) #
-                                escritor.writerow([f'Saída', '  '+str(biblioteca.v_data()), str(biblioteca.v_horario())]) #Inseri a Saída
-                            print(f'   Últimas Linhas: {penultima_linha}')
-                            print(f'                   {ultima_linha}')
-                            print(f'                   {buscar_ultima_linha(diretorio_correcao)}\n')
-                            print('>Saída adicionada com sucesso.')
-                            return #Encerra o processamento da função.
+                        print(f'   Últimas Linhas: {penultima_linha}')
+                        print(f'                   {ultima_linha}\n')
+                        print(' > Saída adicionada com sucesso.')
+                        print(f'                   {buscar_ultima_linha(diretorio_correcao)}')
+                        return #Encerra o processamento da função.
 
 def select_system(system_operation: str) -> str: #Uma função em python.
     if system_operation == 'nt':
