@@ -18,41 +18,46 @@ def barras() -> str:
 def main() -> None:
     os.makedirs('dados', exist_ok=True) #Verifica/Cria a pasta principal de dados.
 
-    if (os.path.isdir(f'dados{barras()}20' + str(biblioteca.v_ano()) + barras() + '0' + str(biblioteca.v_mes()) + '-' + val_meses[biblioteca.v_mes()-1])) or (os.path.isdir(f'dados{barras()}20' + str(biblioteca.v_ano()) + barras() + str(biblioteca.v_mes()) + '-' + val_meses[biblioteca.v_mes()-1])) == False: #Verifica se o diretório existe, se não Cria.
-        os.makedirs(f'dados{barras()}20' + str(biblioteca.v_ano()) + barras() + str(biblioteca.v_mes()) + '-' + val_meses[int(biblioteca.v_mes())-1], exist_ok=True) #Cria o diretório
-        print('\n > Diretório', f'"dados{barras()}20' + str(biblioteca.v_ano()) + barras() + str(biblioteca.v_mes()) + '-' + val_meses[int(biblioteca.v_mes())-1] + '"', 'foi criado!') #imprime uma mensagem de confirmação.
+    #Variáveis para melhorar visibilidade do código.
+    ano = biblioteca.v_ano()
+    mes = biblioteca.v_mes()
+    dia = biblioteca.v_dia()
+    mes_nome = val_meses[mes -1]
+    dir_normal = f'dados{barras()}20{ano}{barras()}{mes}-{mes_nome}'
 
-    diretorio = f'dados{barras()}20{biblioteca.v_ano()}{barras()}{biblioteca.v_mes()}-{val_meses[biblioteca.v_mes()-1]}{barras()}dia_{str(biblioteca.v_dia())}.csv' #Obtem o endereço dinâmico para cada executação ou dia/Mês/Ano
-    os.makedirs(os.path.dirname(diretorio), exist_ok=True) #Confirma de o diretório existe.
+    if not os.path.isdir(dir_normal): #Verifica se o diretório existe, se não Cria.
+        os.makedirs(dir_normal, exist_ok=True) #Cria o diretório
+        print(f'\n > Diretório, {dir_normal} foi criado!') #imprime uma mensagem de confirmação.
 
-    #
-    if os.path.isfile(diretorio) == True: #Verifica se o Arquivo existe, se sim. É verificado abaixo se existe uma Entrada.
+    diretorio = f'{dir_normal}{barras()}dia_{dia}.csv' #Obtem o endereço dinâmico para cada executação ou dia/Mês/Ano
+    os.makedirs(os.path.dirname(diretorio), exist_ok=True) #Confirma de o diretório existe para propósito defensivo ou estrutural.
+
+    if os.path.isfile(diretorio): #Verifica se o Arquivo existe, se sim. É verificado abaixo se existe uma Entrada.
         with open(diretorio, mode='r', encoding='utf-8') as arquivo_csv:
-            ultima_linha = None
+            ultima_linha = None #Inicializa a variável com valor nulo.
 
             for linha in csv.reader(arquivo_csv): #Esse for acha a última linha do arquivo.
-                if linha != []:
-                       ultima_linha = linha
+                if linha:  #Se linha for diferente de vazio, faça!
+                    ultima_linha = linha
 
-            if ultima_linha and ultima_linha[0].strip().lower() == 'entrada': #strip() remove o \n e lower transforma a palavra em minuscula.
-                print(f'\n > Já existe entrada no arquivo dia_{str(biblioteca.v_dia())} no diretório dados{barras()}20{biblioteca.v_ano()}{barras()}{biblioteca.v_mes()}-{val_meses[biblioteca.v_mes()-1]} <')
+            if ultima_linha and ultima_linha[0].strip().lower() == 'entrada': #strip() remove \n, \t, etc. E o lower transforma a palavra em minuscula.
+                print(f'\n > Já existe entrada no arquivo dia_{dia} no diretório {dir_normal} <')
                 print(f'   Última Linha: {ultima_linha}\n')
             
             else:
                 with open(diretorio, mode='a', newline='', encoding='utf-8') as arquivo_csv: #Abre o Arquivo
                     escritor = csv.writer(arquivo_csv) #escritor recebe algo que ainda não sei
                     escritor.writerow([f'Entrada', str(biblioteca.v_data()), str(biblioteca.v_horario())])
-                    print(f'\n > Arquivo dia_{str(biblioteca.v_dia())}.cvs Atualizado!')
+                    print(f'\n > Arquivo dia_{dia}.cvs Atualizado!')
                 print(f'   {biblioteca.buscar_ultima_linha(diretorio)}\n')# Imprimi a saída para conferência visual.                      
-    
-       
+      
     # If de rastreamento
     if not os.path.isfile(diretorio): #Verifica se o arquivo existe, se não, busca se existe algum antes
         
         biblioteca.rastrear_entradasaida('sem Saída')
 
     #If de Criação do Arquivo e Configuração.
-    if os.path.isfile(diretorio) != True: #Verifica se o Arquivo existe, se não. É criado e configurado.
+    if not os.path.isfile(diretorio): #Verifica se o Arquivo existe, se não. É criado e configurado.
         with open(diretorio, mode='a', newline='', encoding='utf-8') as arquivo_csv: #Cria/Abre o Arquivo
             escritor = csv.writer(arquivo_csv) #escritor recebe algo que ainda não sei
 
@@ -62,11 +67,11 @@ def main() -> None:
 
                 escritor.writerow(['TipoDeEntrada','Data','Hora'])
                 escritor.writerow([]) # Pula linha
-                print(f'\n > Arquivo dia_{str(biblioteca.v_dia())}.cvs foi criado!')
+                print(f'\n > Arquivo dia_{dia}.cvs foi criado!')
 
             if arquivo_csv.tell() != 0: #Verifica se o arquivo tem alguma informação e se sim, entra com o registro de entrada.
                 escritor.writerow([f'Entrada', str(biblioteca.v_data()), str(biblioteca.v_horario())])
-                print(f'\n > Arquivo dia_{str(biblioteca.v_dia())}.cvs Atualizado!')
+                print(f'\n > Arquivo dia_{dia}.cvs Atualizado!')
         print(f'   {biblioteca.buscar_ultima_linha(diretorio)}\n')# Imprimi a saída para conferência visual.        
 #---↑↑funções↑↑---
 

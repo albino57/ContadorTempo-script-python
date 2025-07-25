@@ -1,7 +1,7 @@
 import registrar_entrada # type: ignore
 import registrar_saida #type: ignore
 import biblioteca # type: ignore
-import backup_simples # typu: ignore
+import backup_simples # type: ignore
 
 #---↑↑ Bibliotecas ↑↑---
 
@@ -26,13 +26,14 @@ while True:
             botao = 'off'
 
         biblioteca.tempo_data()
-        print('--- Bem-vindo ao Script de tempo de uso no', biblioteca.select_system(biblioteca.system_operation) + '.\t','Powered by Albino\n') #Comando de impressão na tela.
+        print(f'--- Bem-vindo ao Script de tempo de uso no {biblioteca.select_system(biblioteca.system_operation)} ---      Powered by Albino\n') #Comando de impressão na tela.
         menu() #Menu do script
         valor = input('Digite: ') #intereção com o script e conversão para inteiro int()
         selecionar = int(valor)
+
     except ValueError:
         biblioteca.limpar()
-        print(f'\nPor favor, digite uma Opção Válida :) --- Valor digitado: ', valor, '\n')
+        print(f'\nPor favor, digite uma Opção Válida :) --- Valor digitado: {valor} \n')
         continue
     
     if selecionar not in [0,1,2,3]:

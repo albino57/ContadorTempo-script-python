@@ -15,22 +15,30 @@ def barras() -> str:
     if(os.name == 'nt'):
         barra = '\\'
         
-def main():    
-    diretorio = f'dados{barras()}20{biblioteca.v_ano()}{barras()}{biblioteca.v_mes()}-{val_meses[biblioteca.v_mes()-1]}{barras()}dia_{str(biblioteca.v_dia())}.csv' #Obtem o endereço dinâmico para cada executação ou dia/Mês/Ano
+def main():
+
+    #Variáveis para melhorar visibilidade do código.
+    ano = biblioteca.v_ano()
+    mes = biblioteca.v_mes()
+    dia = biblioteca.v_dia()
+    mes_nome = val_meses[mes -1]
+    dir_normal = f'dados{barras()}20{ano}{barras()}{mes}-{mes_nome}'
+
+    diretorio = f'{dir_normal}{barras()}dia_{dia}.csv' #Obtem o endereço dinâmico para cada executação ou dia/Mês/Ano
     
     if os.path.isfile(diretorio):
         with open(diretorio, mode='a', newline='', encoding='utf-8') as arquivo_csv: #Cria/Abre o Arquivo
             escritor = csv.writer(arquivo_csv) #escritor recebe algo que ainda não sei
 
             if arquivo_csv.tell() == 0: # Checa se o aquivo está vazio e se TRUE, cria o carimbo do arquivo.
-                print(f'\n>Arquivo dia_{str(biblioteca.v_dia())}.cvs está vazio, execute o Script "registrar_entrada.py" para criar o cabeçalho e a entrada para proseguir. ')
+                print(f'\n>Arquivo dia_{dia}.cvs está vazio, execute o Script "registrar_entrada.py" para criar o cabeçalho e a entrada para proseguir. ')
 
             if arquivo_csv.tell() != 0: #Verifica se o arquivo tem alguma informação e se sim, entra com o registro de saída.
                 escritor.writerow([f'Saída', '  '+str(biblioteca.v_data()), str(biblioteca.v_horario())]) #Inseri a Saída
-                print(f'\n > Arquivo dia_{str(biblioteca.v_dia())}.cvs Atualizado!')
+                print(f'\n > Arquivo dia_{dia}.cvs Atualizado!')
                 
     else:
-        print(f'\n>Arquivo dia_{str(biblioteca.v_dia())}.cvs não existe!\n')
+        print(f'\n>Arquivo dia_{dia}.cvs não existe!\n')
 
     print(f'   {biblioteca.buscar_ultima_linha(diretorio)}\n')# Imprimi a saída para conferência visual.
 
